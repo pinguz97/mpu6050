@@ -96,7 +96,7 @@ for i = 1:length(t)
       R_acc = Rmatrix(q_acc);
       l_mag = R_acc*mag;
       gamma = l_mag(1)^2 + l_mag(2)^2;
-      if l_mag(1) >= 0
+      if 0 == 0
         q_mag = [sqrt((gamma+l_mag(1)*sqrt(gamma))/2/gamma), 0, 0, l_mag(2)/sqrt(2*(gamma+l_mag(1)*sqrt(gamma)))]';
       else
         q_mag = [l_mag(2)/sqrt(2*(gamma-l_mag(1)*sqrt(gamma))), 0, 0,  sqrt((gamma-l_mag(1)*sqrt(gamma))/2/gamma)]';
@@ -107,13 +107,13 @@ for i = 1:length(t)
 %     gyro_read_k1 = roll_vel_real - gyro_drift_real + randn(1) * gyro_sigma_noise + gyro_cal_bias_real;
 %     gyro_meas_k1 = gyro_read_k1 - gyro_cal_bias_real; % degrees per second
       
-    data(i,:) = [t(i), euler_real_k1(1), euler_real_k1(2), euler_real_k1(3), q_mag(1), q_mag(2), q_mag(3), q_mag(4), mag(1)];
+    data(i,:) = [t(i), euler_real_k1(1), euler_real_k1(2), euler_real_k1(3), q(1), q(2), q(3), q(4), l_mag(1)];
     
     euler_real_k = euler_real_k1;
    
 end
 %% Plot data
-plot(t,data(:,9));
+plot(t,data(:,5),t,data(:,6), t,data(:,7),t,data(:,8));
 grid on
 xlim([0 6]);
 
