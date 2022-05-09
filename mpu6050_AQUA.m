@@ -65,9 +65,16 @@ Q = [0.002^2 0; 0 0];          % process noise
 H = [1 0];
 
 %% Simulation Loop
-euler_real_k = [0,0,0]';
-omega_real = [0.1 -0.2 0.1]';
+%euler_real_k = [2.579, -0.0573, 1.9536]';
+euler_real_k = [0 0 0]';
+%omega_real = [0.1 -0.2 0.1]';
+omega_real = [0.1 0.5235 -1]';
 euler_real_k1 = [0,0,0]';
+
+i = [1 0 0]';
+j = [0 1 0]';
+k = [0 0 1]';
+terna = [i,j,k];
 % gyro movements
 for i = 1:length(t)
    
@@ -83,10 +90,11 @@ for i = 1:length(t)
 %     end
     
       euler_real_k1 = euler_real_k + omega_real * dt;
-      accel = Rmatrix(euler_real_k1)*[0 0 1]';
-      mag = Rmatrix(euler_real_k1)*[1 0 0]';
+      ciccio  = Rmatrix(euler_real_k1)';
+      accel = ciccio*[0 0 1]';
+      mag = ciccio*[1 0 0]';
       
-      if accel_meas(3) >= 0
+      if 0 == 0
         lambda1 = sqrt((1+accel(3))/2);
         q_acc = [lambda1, -accel(2)/2/lambda1, accel(1)/2/lambda1, 0]';
       else
@@ -94,26 +102,41 @@ for i = 1:length(t)
         q_acc = [-accel(2)/2/lambda2, lambda2, 0,  accel(1)/2/lambda2]';
       end
       R_acc = Rmatrix(q_acc);
-      l_mag = R_acc*mag;
+      l_mag = R_acc'*mag;
       gamma = l_mag(1)^2 + l_mag(2)^2;
       if 0 == 0
         q_mag = [sqrt((gamma+l_mag(1)*sqrt(gamma))/2/gamma), 0, 0, l_mag(2)/sqrt(2*(gamma+l_mag(1)*sqrt(gamma)))]';
+        q = Qproduct(q_acc, q_mag);
       else
         q_mag = [l_mag(2)/sqrt(2*(gamma-l_mag(1)*sqrt(gamma))), 0, 0,  sqrt((gamma-l_mag(1)*sqrt(gamma))/2/gamma)]';
+        q = Qproduct(q_acc, q_mag);
       end
-      q = Qproduct(q_acc, q_mag);
+            
       
 %     accel_meas_k1 = roll_real_k1 + randn(1) * accel_sigma_noise;
 %     gyro_read_k1 = roll_vel_real - gyro_drift_real + randn(1) * gyro_sigma_noise + gyro_cal_bias_real;
 %     gyro_meas_k1 = gyro_read_k1 - gyro_cal_bias_real; % degrees per second
       
-    data(i,:) = [t(i), euler_real_k1(1), euler_real_k1(2), euler_real_k1(3), q(1), q(2), q(3), q(4), l_mag(1)];
-    
+    data(i,:) = [t(i), euler_real_k1(1), euler_real_k1(2), euler_real_k1(3), q(1), q(2), q(3), q(4), accel(3)];
+    %data(i,:) = [t(i), euler_real_k1(1), euler_real_k1(2), euler_real_k1(3), q_acc(1), q_mag(1), l_mag(1), l_mag(3), accel(3)];
     euler_real_k = euler_real_k1;
-   
+    
+
+
+
+    
 end
 %% Plot data
-plot(t,data(:,5),t,data(:,6), t,data(:,7),t,data(:,8));
+plot(t,data(:,5),t,data(:,6), t,data(:,7),t,data(:,8),t,data(:,9));
+%plot(t,data(:,6), t,data(:,7),t,data(:,8),t,data(:,9)); %mags
+%plot(t,data(:,7),t,data(:,8),t,data(:,9)); %accelerazioni
 grid on
 xlim([0 6]);
+figure(2);
+plot(t,data(:,2),t,data(:,3), t,data(:,4));
+%plot(t,data(:,5),t,data(:,6), t,data(:,9), t,data(:,7)); %accel and l_mag %discontinuities
+%plot(t,data(:,8), t,data(:,9));
+grid on
+xlim([0 6]);
+
 

@@ -9,7 +9,7 @@ pitch = 0;
 roll = 0;
 euler = [yaw pitch roll];
 
-q = euler2quat(euler);
+q = [data(600,5),data(600,6),data(600,7),data(600,8)];
 R = [ cos(pitch)*cos(yaw), -cos(roll)*sin(yaw)+sin(roll)*sin(pitch)*cos(yaw), sin(roll)*sin(yaw)+cos(roll)*sin(pitch)*cos(yaw);
       cos(pitch)*sin(yaw), cos(roll)*cos(yaw)+sin(roll)*sin(pitch)*sin(yaw), -sin(roll)*sin(yaw)+cos(roll)*sin(pitch)*sin(yaw);
       -sin(pitch),             sin(roll)*cos(pitch),                                           cos(roll)*cos(pitch)
