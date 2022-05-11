@@ -21,7 +21,7 @@ gyro_meas_k = 0.0;
 
 dt = 0.004;
 t = 0:dt:6;
-data = zeros(length(t),17);
+data = zeros(length(t),19);
 %% Calculate q_acc q_mag
 accel_meas = zeros(3,1);
 mag_meas = zeros(3,1);
@@ -66,11 +66,11 @@ H = [1 0];
 
 %% Simulation Loop
 %euler_real_k = [2.579, -0.0573, 1.9536]';
-euler_real_k = [0 0 0]';
+euler_real_k = [0 0 pi/3]';
 %omega_real = [0.1 -0.2 0.1]';
 %omega_real = [0.1 0.5235 1]';
 omega_real2 = [0 0 pi]';
-omega_real = [pi/3 0 0]';
+omega_real = [0.1 pi/6 1]';
 omega_real1 = [0 pi 0]';
 euler_real_k1 = [0,0,0]';
 
@@ -108,17 +108,19 @@ for i = 1:length(t)
  
       else
         q_mag = [l_mag(2)/sqrt(2*(gamma-l_mag(1)*sqrt(gamma))), 0, 0,  sqrt((gamma-l_mag(1)*sqrt(gamma))/2/gamma)]';
-        q = Qproduct(q_acc, q_mag);
       end
             q = Qproduct(q_acc, q_mag);
-           %q = [q(1),-q(2), -q(3),-q(4)]; 
+            if l_mag(1) <0
+            q = [-q(1),-q(2), -q(3),-q(4)];
+            end
+           
       
 %     accel_meas_k1 = roll_real_k1 + randn(1) * accel_sigma_noise;
 %     gyro_read_k1 = roll_vel_real - gyro_drift_real + randn(1) * gyro_sigma_noise + gyro_cal_bias_real;
 %     gyro_meas_k1 = gyro_read_k1 - gyro_cal_bias_real; % degrees per second
       
     data(i,:) = [t(i), euler_real_k1(1), euler_real_k1(2), euler_real_k1(3), q(1), q(2), q(3), q(4),...
-             q_acc(1), q_acc(2), q_acc(3), q_acc(4), q_mag(1), q_mag(4), accel(3), l_mag(1), l_mag(2)];
+             q_acc(1), q_acc(2), q_acc(3), q_acc(4), q_mag(1), q_mag(4), accel(3), l_mag(1), l_mag(2),accel(1),accel(2)];
     %data(i,:) = [t(i), euler_real_k1(1), euler_real_k1(2), euler_real_k1(3), q_mag(1), q_mag(4), l_mag(1), l_mag(2), accel(3)];
     euler_real_k = euler_real_k1;
     
@@ -141,6 +143,7 @@ plot(t,data(:,13),t,data(:,14));
 grid on
 xlim([0 6]);
 subplot(2,2,4)
+%plot(t,data(:,15),t,data(:,16),t,data(:,17),t,data(:,18),t,data(:,19));
 plot(t,data(:,15),t,data(:,16),t,data(:,17));
 grid on
 xlim([0 6]);

@@ -1,5 +1,5 @@
 %euler_real_k = [0 11*pi/20 1/20*pi]';
-euler_real_k = [pi/6 0 0]';
+euler_real_k = [11/20*pi 1*pi/20 0]';
        ciccio  = Rmatrix(euler_real_k)';
       accel = ciccio*[0 0 1]';
       mag = ciccio*[1 0 0]';
@@ -24,15 +24,17 @@ euler_real_k = [pi/6 0 0]';
       q_mag3 = Qproduct([0 0 0 1]',q_mag1);
       q_mag2 = [l_mag(2)/sqrt(2*(gamma-l_mag(1)*sqrt(gamma))), 0, 0,  sqrt((gamma-l_mag(1)*sqrt(gamma))/2/gamma)]';
       q = Qproduct(q_acc, q_mag);
+      if accel(2) > 0
       q = [q(1),-q(2), -q(3),-q(4)];
+      end
 
 i = [1 0 0]';
 j = [0 1 0]';
 k = [0 0 1]';
 terna = [i,j,k];
 terna1 = Rmatrix(euler_real_k)*terna;
-cicciociccio = Rmatrix(q)*[0 0 1]';
-terna2 = Rmatrix(q)'*terna;
+cicciociccio = Rmatrix(q_acc)*[0 0 1]';
+terna2 = Rmatrix(q_acc)'*terna;
 quiver3(0, 0, 0, terna(1,1), terna(2,1), terna(3,1),'r');
 axis equal;
 hold;
